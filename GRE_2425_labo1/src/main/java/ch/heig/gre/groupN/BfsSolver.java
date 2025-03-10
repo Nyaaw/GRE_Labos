@@ -11,7 +11,6 @@ import java.util.*;
  *
  * @author Ripoll Pierric - Sottile Alan
  */
-
 public final class BfsSolver implements MazeSolver {
     @Override
     public List<Integer> solve(Graph graph, int source, int destination, VertexLabelling<Integer> treatments) {
@@ -22,7 +21,7 @@ public final class BfsSolver implements MazeSolver {
         int[] distance = new int[n];
         int[] predecessor = new int[n];
 
-        // Initializing the BFS tables
+        // Initializing the BFS tables, we initialize them to -1 to indicate we haven't visited them yet
         for (int i = 0; i < n; i++) {
             distance[i] = -1;
             predecessor[i] = -1;
@@ -49,11 +48,14 @@ public final class BfsSolver implements MazeSolver {
                 break;
             }
 
-            //for each unvisited neighbors of the current vertex
+            //for each unvisited neighbors of the current vertex,
+            // we update their distance to current +1, and we put
+            // current as their predecessor.
             for (int neighbor : graph.neighbors(current)) {
                 if (distance[neighbor] == -1) {
                     distance[neighbor] = distance[current] + 1;
                     predecessor[neighbor] = current;
+                    //We add them to the queue to treat them next
                     queue.add(neighbor);
                 }
             }

@@ -10,36 +10,39 @@ import java.util.Stack;
 
 public final class DfsGenerator implements MazeGenerator {
 
-  Random random = new Random();
+    Random random = new Random();
 
-  @Override
-  public void generate(MazeBuilder builder, int from) {
-    Stack<Integer> parents = new Stack<>();
-    Integer cursor = from;
-    Integer next;
-    List<Integer> neighbors;
+    @Override
+    public void generate(MazeBuilder builder, int from) {
+        Stack<Integer> parents = new Stack<>();
+        Integer cursor = from;
+        Integer next;
+        List<Integer> neighbors;
 
-    while(true){
-      builder.progressions().setLabel(cursor, Progression.PROCESSING);
+        while (true) {
+            builder.progressions().setLabel(cursor, Progression.PROCESSING);
 
-      neighbors = builder.topology().neighbors(cursor);
-      neighbors.removeIf(n -> builder.progressions().getLabel(n) != Progression.PENDING);
+            neighbors = builder.topology().neighbors(cursor);
+            neighbors.removeIf(n -> builder.progressions().getLabel(n) != Progression.PENDING);
 
-      if(neighbors.size() > 0){
-        parents.push(cursor);
-        next = neighbors.get(random.nextInt(neighbors.size()));
-        builder.removeWall(cursor, next);
-        cursor = next;
-      }else{
-        builder.progressions().setLabel(cursor, Progression.PROCESSED);
-        cursor = parents.pop();
-      }
+            if (!neighbors.isEmpty()) {
+                parents.push(cursor);
+                next = neighbors.get(random.nextInt(neighbors.size()));
+                builder.removeWall(cursor, next);
+                cursor = next;
+            } else {
+                builder.progressions().setLabel(cursor, Progression.PROCESSED);
+                if (parents.isEmpty()) {
+                    break;
+                }
+                cursor = parents.pop();
+            }
+        }
     }
-  }
 
-  @Override
-  public boolean requireWalls() {
-    return true;
-  }
+    @Override
+    public boolean requireWalls() {
+        return true;
+    }
 
 }
