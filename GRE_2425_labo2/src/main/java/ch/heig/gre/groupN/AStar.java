@@ -1,4 +1,4 @@
-package ch.heig.gre.groupX;
+package ch.heig.gre.groupN;
 
 import ch.heig.gre.graph.GridGraph2D;
 import ch.heig.gre.graph.PositiveWeightFunction;
