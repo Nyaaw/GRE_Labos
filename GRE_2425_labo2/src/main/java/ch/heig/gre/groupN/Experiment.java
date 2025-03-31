@@ -11,8 +11,6 @@ import ch.heig.gre.maze.impl.ShenaniganWeightFunction;
 
 import java.util.random.RandomGenerator;
 
-// TODO: renommer le package (Shift + F6) selon la lettre attribuée à votre groupe
-
 public final class Experiment {
   /** Dimension de la grille (carrée) */
   private static final int SIDE = 1100;
@@ -66,7 +64,7 @@ public final class Experiment {
   record Params(String description, double[] parameters) {}
 
   public static void main(String[] args) {
-    // TODO
+    //TODO
   }
 
 

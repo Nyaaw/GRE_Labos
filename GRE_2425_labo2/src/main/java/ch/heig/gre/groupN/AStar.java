@@ -6,8 +6,43 @@ import ch.heig.gre.graph.VertexLabelling;
 import ch.heig.gre.maze.GridMazeSolver;
 
 public final class AStar implements GridMazeSolver {
+
   public enum Heuristic {
-    DIJKSTRA, INFINITY_NORM, EUCLIDEAN_NORM, MANHATTAN, K_MANHATTAN
+    DIJKSTRA,
+    
+    INFINITY_NORM{
+      @Override
+      public int computeHeuristic(int source, int destination, int k){
+        return 0;        
+      }
+    },
+    
+    EUCLIDEAN_NORM{
+      @Override
+      public int computeHeuristic(int source, int destination, int k){
+        return 0;          
+      }
+    },
+    
+    MANHATTAN{
+      @Override
+      public int computeHeuristic(int source, int destination, int k){
+        return 0;        
+      }
+    },
+    
+    K_MANHATTAN{
+      @Override
+      public int computeHeuristic(int source, int destination, int k){
+        return 0;        
+      }
+    };
+
+    public int computeHeuristic(int source, int destination, int k){
+      return 0;
+    }
+
+
   }
 
   /** Heuristique utilisée pour l'algorithme A*. */
