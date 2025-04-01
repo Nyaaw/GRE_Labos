@@ -43,7 +43,7 @@ public final class AStar implements GridMazeSolver {
       public double computeHeuristic(int source, int destination, int graphWidth, int kManhattan){
         coords coord = new coords(source, destination, graphWidth);
 
-        return kManhattan * Math.abs(coord.x1 - coord.x2) + Math.abs(coord.y1 - coord.y2);        
+        return kManhattan * (Math.abs(coord.x1 - coord.x2) + Math.abs(coord.y1 - coord.y2));        
       }
     };
     
