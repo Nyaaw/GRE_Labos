@@ -8,8 +8,8 @@ import ch.heig.gre.maze.GridMazeSolver;
 import java.util.*;
 
 /**
- * AStar implements the A* algorithm to find the shortest path between two vertices
- * in a graph while taking in account the 5 different heuristics we offer
+ * AStar implémente l'algorithme A* pour trouver le plus court chemin entre deux sommets
+ * dans un graphe tout en prenant en compte les 5 heuristiques différentes proposées
  *
  * @author Ripoll Pierric - Sottile Alan
  */
@@ -36,10 +36,18 @@ public final class AStar implements GridMazeSolver {
         this.kManhattan = kManhattan;
     }
 
+    /**
+     * Enumération des heuristiques disponibles
+     */
     public enum Heuristic {
-
+        /**
+         * Heuristique de Dijkstra, qui ne prend pas en compte la distance restante
+         */
         DIJKSTRA,
 
+        /**
+         * Heuristique de l'infini, qui renvoie la distance infinie entre le sommet source et le sommet destination.
+         */
         INFINITY_NORM {
             @Override
             public double computeHeuristic(int source, int destination, int graphWidth, int kManhattan) {
@@ -48,6 +56,9 @@ public final class AStar implements GridMazeSolver {
             }
         },
 
+        /**
+         * Heuristique de la norme euclidienne qui renvoie la distance euclidienne
+         */
         EUCLIDEAN_NORM {
             @Override
             public double computeHeuristic(int source, int destination, int graphWidth, int kManhattan) {
@@ -56,6 +67,9 @@ public final class AStar implements GridMazeSolver {
             }
         },
 
+        /**
+         * Heuristique de la distance de Manhattan
+         */
         MANHATTAN {
             @Override
             public double computeHeuristic(int source, int destination, int graphWidth, int kManhattan) {
@@ -64,6 +78,9 @@ public final class AStar implements GridMazeSolver {
             }
         },
 
+        /**
+         * Heuristique de la distance de Manhattan multipliée par kManhattan.
+         */
         K_MANHATTAN {
             @Override
             public double computeHeuristic(int source, int destination, int graphWidth, int kManhattan) {
@@ -72,18 +89,24 @@ public final class AStar implements GridMazeSolver {
             }
         };
 
+        /**
+         * Coordonnées bidimensionnelles d'un sommet dans le graphe.
+         */
         private record coords(int x1, int y1, int x2, int y2) {
             public coords(int source, int destination, int graphWidth) {
                 this(source % graphWidth, source / graphWidth, destination % graphWidth, destination / graphWidth);
             }
         }
 
+        /**
+         * Calcule la valeur de l'heuristique entre deux sommets.
+         */
         public double computeHeuristic(int source, int destination, int graphWidth, int kManhattan) {
             return 0;
         }
     }
 
-    //Returns the shortest path from the source to the destination while using the A* algorithm
+    //Retourne le plus court chemin du sommet source au sommet destination en utilisant l'algorithme A*
     @Override
     public Result solve(GridGraph2D grid,
                         PositiveWeightFunction weights,
@@ -91,19 +114,19 @@ public final class AStar implements GridMazeSolver {
                         int destination,
                         VertexLabelling<Boolean> processed) {
 
-        int n = grid.width() * grid.height(); //The amount of vertices
-        int[] distance = new int[n]; //The distance from the source to each vertex
-        int[] predecessors = new int[n]; //The predecessors of each vertex
-        int treated = 0; //Used to keep track of the amount of treated vertices
+        int n = grid.width() * grid.height(); // Le nombre de sommets
+        int[] distance = new int[n]; // La distance du sommet source à chaque sommet
+        int[] predecessors = new int[n]; // Les prédécesseurs de chaque sommet
+        int treated = 0; // Utilisé pour suivre le nombre de sommets traités
 
-        //Initializing the tables
+        // Initialisation des tableaux
         for (int i = 0; i < n; i++) {
             distance[i] = Integer.MAX_VALUE;
             predecessors[i] = NULL;
         }
         distance[source] = 0;
 
-        //Initializing the priority queue
+        // Initialisation de la file de priorité
         PriorityQueue<Integer> queue = new PriorityQueue<>(
                 Comparator.comparingDouble(v ->
                         distance[v] + heuristic.computeHeuristic(v, destination, grid.width(), kManhattan))
@@ -111,7 +134,7 @@ public final class AStar implements GridMazeSolver {
         queue.offer(source);
 
         while (!queue.isEmpty()) {
-            //We treat the vertex with the lowest distance while taking in account the heuristic
+            // On traite le sommet avec la plus faible distance en tenant compte de l'heuristique
             int currentVertex = queue.poll();
             treated++;
 
@@ -123,11 +146,11 @@ public final class AStar implements GridMazeSolver {
                 break;
             }
 
-            //We update the distance of each neighbors by taking into account the heuristic
+            // On met à jour la distance de chaque voisin en prenant en compte l'heuristique
             for (int neighbor : grid.neighbors(currentVertex)) {
                 int edgeWeight = weights.get(currentVertex, neighbor);
-                //If a change is needed in the table, we update it and add it to the queue
-                if (distance[neighbor] > distance[currentVertex] + edgeWeight || distance[neighbor] == Integer.MAX_VALUE) {
+                // Si un changement est nécessaire dans le tableau, on le met à jour et l'ajoute à la file de priorité
+                if (distance[neighbor] > distance[currentVertex] + edgeWeight) {
                     distance[neighbor] = distance[currentVertex] + edgeWeight;
                     predecessors[neighbor] = currentVertex;
                     queue.offer(neighbor);
@@ -135,13 +158,13 @@ public final class AStar implements GridMazeSolver {
             }
         }
 
-        //We create the reversed path because it's easier to do so
+        // On crée le chemin inversé car il est plus facile de le faire ainsi
         List<Integer> path = new ArrayList<>();
-        for (int v = destination; v != -1; v = predecessors[v]) {
+        for (int v = destination; v != NULL; v = predecessors[v]) {
             path.add(v);
         }
 
-        //We reverse the path here, since we saw it's O(1) instead of O(n) if we used Collections.reverse()
+        // On inverse le chemin ici, car on a vu que c'est O(1) au lieu de O(n) si on utilisait Collections.reverse()
         return new Result(path.reversed(), distance[destination], treated);
     }
 }
